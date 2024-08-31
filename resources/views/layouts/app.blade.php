@@ -65,6 +65,7 @@
     @if (!request()->routeIs('login') && !request()->routeIs('user.register.form') &&
     !request()->routeIs('password.reset'))
     @include('layouts.partials.footer')
+    @include('admin.auth.partials.change-passsword')
     @endif
 
 

@@ -12,6 +12,6 @@ class AdminController extends Controller
      */
     public function __invoke(Request $request)
     {
-        return view('layouts.admin');
+        return to_route('users.index');
     }
 }

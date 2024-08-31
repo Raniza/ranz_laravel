@@ -131,4 +131,22 @@ class AuthController extends Controller
                     ? redirect()->route('login')->with('success', $status)
                     : back()->withErrors(['email' => [$status]]);
     }
+
+    public function changePassword(Request $request)
+    {
+        $validated = $request->validate([
+            'current_password' => 'required',
+            'password' => 'required|confirmed',
+            'password_confirmation' => 'required',
+        ]);
+
+        $user_id = auth()->user()->id;
+        $user = User::find($user_id);
+
+        if (Hash::check($request->input('current_password'), $user->password)) {
+            dd("OK");
+        }
+
+        return redirect()->back()->withErrors(['current_password' => 'Password yang anda berikan salah.'])->withInput();
+    }
 }

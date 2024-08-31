@@ -43,7 +43,9 @@ class TutorialController extends Controller
      */
     public function store(StoreTutorialRequest $request)
     {
-        $tutorial = Tutorial::create([
+        $tutorial = Tutorial::updateOrcreate([
+            'id' => $request->input('tutorial_id'),
+        ], [
             'title_id' => $request->input('title_id'),
             'sub_title' => $request->input('sub_title'),
             'contents' => $request->input('contents')
@@ -57,7 +59,7 @@ class TutorialController extends Controller
      */
     public function show(string $id)
     {
-        $titles = Title::with(['tutorials', 'author', 'category'])->get();
+        $titles = Title::with(['tutorials', 'author', 'category'])->cursorPaginate(5);
         
         return view('tutorials.tutorial-list', compact('titles'));
     }
@@ -67,7 +69,14 @@ class TutorialController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $categories = Category::all();
+        $titles = Title::where('is_final', false)->get();
+        $tutorial = Tutorial::with(['title.category'])->find($id);
+        $edit_mode = true;
+
+        return view('tutorials.tutorial-create', compact(
+            'categories', 'titles', 'tutorial', 'edit_mode'
+        ));
     }
 
     /**
@@ -75,7 +84,12 @@ class TutorialController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        /** Publish tutorial */
+        $tutorial = Tutorial::find($id);
+        $tutorial->is_publish = true;
+        $tutorial->save();
+
+        return redirect()->back()->with('success', 'Tutorial berhasil dipublish.');
     }
 
     /**

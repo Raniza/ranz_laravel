@@ -62,6 +62,10 @@
                                 class="fa-solid fa-arrow-up-from-bracket"></i> Register</button>
                     </div>
                 </form>
+                <div class="d-flex justify-content-between mt-2">
+                    <a href="{{ route('home.index') }}" class="text-decoration-none">Home</a>
+                    <a href="{{ route('login') }}" class="text-decoration-none">Login</a>
+                </div>
             </div>
         </div>
     </div>

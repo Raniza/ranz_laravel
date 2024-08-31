@@ -135,7 +135,12 @@
                 <ul class="list-group list-group-flush">
                     @if ($title_category->count() > 0)
                     @foreach ($title_category as $title_by)
-                    <li class="list-group-item">{{ $title_by->title }}</li>
+                    <li class="list-group-item">
+                        <a href="{{ route('tutorials.title.show', $title_by->id) }}"
+                            class="text-decoration-none text-dark">
+                            {{ $title_by->title }}
+                        </a>
+                    </li>
                     @endforeach
                     @else
                     <li class="list-group-item">No related contents</li>

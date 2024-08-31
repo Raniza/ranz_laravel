@@ -25,6 +25,7 @@ return new class extends Migration
             $table->string('user_id')->nullable();
             $table->boolean('is_final')->default(false);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('category_id')->references('id')->on('categories')->onDelete('cascade');
         });
@@ -36,6 +37,7 @@ return new class extends Migration
             $table->longText('contents');
             $table->boolean('is_publish')->default(false);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('title_id')->references('id')->on('titles')->onDelete('cascade');
         });
@@ -47,6 +49,7 @@ return new class extends Migration
             $table->text('comment');
             $table->boolean('is_approve')->default(false);
             $table->timestamps();
+            $table->softDeletes();
 
             $table->foreign('tutorial_id')->references('id')->on('tutorials')->onDelete('cascade');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');

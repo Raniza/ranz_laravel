@@ -21,6 +21,7 @@ Route::prefix('user')->group(function() {
         Route::post('/logout',  [App\Http\Controllers\Admin\AuthController::class, 'logout'])->middleware('auth')->name('logout');
         Route::get('/register', [App\Http\Controllers\Admin\AuthController::class, 'registerForm'])->name('register.form');
         Route::post('/register', [App\Http\Controllers\Admin\AuthController::class, 'registerAction'])->name('register.action');
+        Route::post('/change-password', [App\Http\Controllers\Admin\AuthController::class, 'changePassword'])->name('change.password');
     });
 
     Route::get('/login', [App\Http\Controllers\Admin\AuthController::class, 'login'])->name('login');
@@ -44,3 +45,6 @@ Route::middleware(['auth', 'isAdmin'])->group(function() {
     Route::get('/admin', App\Http\Controllers\Admin\AdminController::class)->name('admin');
     Route::resource('/users', App\Http\Controllers\Admin\UserController::class);
 });
+
+/* ------------------------------- ABout route ------------------------------ */
+Route::resource('about',App\Http\Controllers\Admin\AboutController::class);

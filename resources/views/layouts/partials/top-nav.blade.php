@@ -23,11 +23,11 @@
                     <a class="nav-link disabled" aria-disabled="true">Demo</a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="#">About</a>
+                    <a class="nav-link" href="{{ route('about.index') }}">About</a>
                 </li>
                 @if (auth()->check() && auth()->user()->role === 'admin')
                 <li class="nav-item">
-                    <a class="nav-link" href="{{ route('admin') }}">Admin Panel</a>
+                    <a class="nav-link" href="{{ route('users.index') }}">Admin Panel</a>
                 </li>
                 @endif
 
@@ -50,7 +50,8 @@
                         </li>
 
                         <li>
-                            <a class="dropdown-item" href="#">
+                            <a class="dropdown-item" href="#" data-bs-toggle="modal"
+                                data-bs-target="#changePasswordModal">
                                 <i class="fa-solid fa-unlock-keyhole"></i> Change Password
                             </a>
                         </li>

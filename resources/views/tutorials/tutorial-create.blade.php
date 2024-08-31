@@ -8,6 +8,9 @@
         <div class="spinner"></div>
     </div>
     @csrf
+    @if ($edit_mode)
+    <input type="hidden" name="tutorial_id" value="{{ $tutorial->id }}">
+    @endif
     <div class="d-flex justify-content-between">
         <h4>
             <span className="text-primary fw-bolder">
@@ -28,9 +31,26 @@
             <select class="form-select form-select-sm mb-2 @error('title_id') is-invalid @enderror"
                 aria-label="Select tutorial title" name="title_id" id="selectTile">
                 <option selected value="">Open to select title</option>
+
                 @if ($titles->count() > 0)
+
                 @foreach ($titles as $title)
-                <option value="{{ $title->id }}" @selected($title->id == old('title_id'))>{{ $title->title }}</option>
+                @php
+
+                $selected = false;
+
+                if ($edit_mode && ! old('title_id') && ! $errors->has('title_id')) {
+                $selected = $title->id == $tutorial->title_id;
+                }
+
+                if (old('title_id')) {
+                $selected = $title->id == old('title_id');
+                }
+
+                @endphp
+
+                <option value="{{ $title->id }}" @selected($selected)>{{ $title->title }}</option>
+
                 @endforeach
                 @endif
             </select>
@@ -41,10 +61,26 @@
 
         <div class="col-sm-12 col-lg-4">
             <div class="input-group input-group-sm mb-2">
+
+                @php
+                $sub_title_value = "";
+
+                if (old('sub_title')) {
+                $sub_title_value = old('sub_title');
+                } else {
+
+                if ($edit_mode && ! $errors->has('sub_title')) {
+                $sub_title_value = $tutorial->sub_title;
+                }
+
+                }
+
+                @endphp
+
                 <span class="input-group-text" id="title-addon">Sub Title</span>
                 <input type="text" class="form-control @error('sub_title') is-invalid @enderror" placeholder="Sub title"
                     aria-label="Sub title" aria-describedby="title-addon" name="sub_title"
-                    value="{{ old('sub_title') }}">
+                    value="{{ $sub_title_value }}">
 
             </div>
             @error('sub_title')
@@ -54,28 +90,29 @@
 
         <div class="col-sm-12 col-lg-4">
             <p class="d-flex justify-content-end mb-2">
-                Category:&nbsp;&nbsp; <span class="fw-bolder text-danger" id="spanCategory">---</span>
+                Category:&nbsp;&nbsp; <span class="fw-bolder text-danger" id="spanCategory">{{ $edit_mode ?
+                    $tutorial->title->category->category : '---' }}</span>
             </p>
             @push('scripts')
             <script>
                 const spanCategory = document.getElementById('spanCategory')
-            const selectTile = document.getElementById('selectTile')
+                const selectTile = document.getElementById('selectTile')
 
-            const titles = {{ Js::from($titles) }}
-            const categories = {{ Js::from($categories) }}
+                const titles = {{ Js::from($titles) }}
+                const categories = {{ Js::from($categories) }}
 
-            selectTile.onchange = function() {
-                const titleId = this.value
+                selectTile.onchange = function() {
+                    const titleId = this.value
 
-                if (titleId > 0) {
-                    const selectedTitleCategory = titles.filter(row => row.id == titleId)[0].category_id
-                    const categoryTitle = categories.filter(row => row.id == selectedTitleCategory)[0].category
+                    if (titleId > 0) {
+                        const selectedTitleCategory = titles.filter(row => row.id == titleId)[0].category_id
+                        const categoryTitle = categories.filter(row => row.id == selectedTitleCategory)[0].category
 
-                    spanCategory.innerHTML = capitalize(categoryTitle)
-                } else {
-                    spanCategory.innerHTML = "---"
+                        spanCategory.innerHTML = capitalize(categoryTitle)
+                    } else {
+                        spanCategory.innerHTML = "---"
+                    }
                 }
-            }
             
             </script>
             @endpush
@@ -102,6 +139,51 @@
 
 @push('scripts')
 
+@if (old('contents'))
+<script>
+    const tutorContents = "{!! old('contents') !!}"
+
+    $('#contents').summernote({
+        callbacks: {
+            onInit: function () {
+                $('#contents').summernote("code", tutorContents);
+            },
+        }
+    })
+</script>
+@else
+
+@if ($edit_mode)
+{{-- Edit mode --}}
+<script>
+    const tutorial = @json($tutorial)
+
+    $('#contents').summernote({
+        callbacks: {
+            onInit: function () {
+                $('#contents').summernote("code", tutorial.contents);
+            },
+        }
+    })
+</script>
+
+@else
+{{-- Create new mode --}}
+
+<script>
+    $('#contents').summernote({
+        callbacks: {
+            onInit: function () {
+                $('#contents').summernote("code", "");
+            },
+        }
+    })
+</script>
+
+@endif
+
+@endif
+
 <script>
     const tutorialForm = document.getElementById('tutorialForm')
 
@@ -110,14 +192,6 @@
         loadingStatus('tutorial-form')
     }
 
-    $('#contents').summernote({
-        placeholder: "Tulis tutorial disini.",
-            callbacks: {
-                onInit: function () {
-                    $('#contents').summernote("code", "");
-                },
-            }
-    })
 </script>
 
 @endpush
