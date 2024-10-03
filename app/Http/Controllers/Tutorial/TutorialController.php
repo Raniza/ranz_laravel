@@ -51,7 +51,7 @@ class TutorialController extends Controller
             'contents' => $request->input('contents')
         ]);
 
-        return redirect()->back()->with('success', 'Tutorial berhasil disimpan.');
+        return redirect()->route('tutorials.all.show', $tutorial->id)->with('success', 'Tutorial berhasil disimpan.');
     }
 
     /**

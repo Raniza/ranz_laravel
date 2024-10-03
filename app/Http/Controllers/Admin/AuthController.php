@@ -144,7 +144,10 @@ class AuthController extends Controller
         $user = User::find($user_id);
 
         if (Hash::check($request->input('current_password'), $user->password)) {
-            dd("OK");
+            $user->password = $request->input('password');
+            $user->save();
+
+            return redirect()->back()->withSuccess('Password berhasil diganti.');
         }
 
         return redirect()->back()->withErrors(['current_password' => 'Password yang anda berikan salah.'])->withInput();

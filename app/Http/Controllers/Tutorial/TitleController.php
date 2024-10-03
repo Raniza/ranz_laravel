@@ -53,7 +53,9 @@ class TitleController extends Controller
         $title_category = Title::select('id', 'title')
                             ->where('id', "<>", $title->id)
                             ->where('category_id', $title->category_id)
-                            ->whereHas('tutorials')
+                            ->whereHas('tutorials', function ($query) {
+                                $query->where('is_publish', true);
+                            })
                             ->get();
 
         $tutorial_id = $request->query('tutorial_id') ?? null;
@@ -84,7 +86,15 @@ class TitleController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        if ($request->input('set_final')) {
+            $title = Title::find($id);
+            $title->is_final = true;
+            $title->save();
+
+            return redirect()->back()->withSuccess('Title berhasila dilakukan finalisasi.');
+        }
+
+        return redirect()->back()->with('server-error', 'Terjadi error saat set final title.');
     }
 
     /**

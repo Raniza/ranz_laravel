@@ -3,7 +3,7 @@
 @section('content')
 <div class="row">
     <div class="col-md-9 col-sm-12 mb-3">
-        <div class="card rounded-4">
+        <div class="card border-0">
             <div class="card-body py-2">
                 <h5 class="card-title">
                     <img src="{{ asset('images/logo/' . $title->category->category . '.png') }}" height="26"
@@ -127,7 +127,7 @@
     </div>
 
     <div class="col-md-3 col-sm-12">
-        <div class="card rounded-3">
+        <div class="card border-0">
             <div class="card-body py-3">
                 <h6 class="card-subtitle mb-0">
                     Related Contents:

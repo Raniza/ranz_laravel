@@ -20,6 +20,9 @@
                         href="{{ route('tutorials.all.index') }}">Tutorials</a>
                 </li>
                 <li class="nav-item">
+                    <a href="#" class="nav-link disabled" aria-disabled="true">By Project</a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link disabled" aria-disabled="true">Demo</a>
                 </li>
                 <li class="nav-item">
@@ -63,8 +66,9 @@
                     @endguest
                 </li>
             </ul>
-            <form class="d-flex" role="search">
-                <input class="form-control form-control-sm me-2" type="search" placeholder="Search" aria-label="Search">
+            <form action="{{ route('tutorials.search') }}" class="d-flex" role="search" method="GET">
+                <input class="form-control form-control-sm me-2" type="search" placeholder="Search" aria-label="Search"
+                    name="keywords" value="{{ request()->has('keywords') ? request('keywords') : '' }}">
                 <button class="btn btn-sm btn-outline-success" type="submit">Search</button>
             </form>
         </div>

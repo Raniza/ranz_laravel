@@ -10,7 +10,7 @@
             <div class="spinner"></div>
         </div>
         <table class="table list-table">
-            <thead>
+            <thead class="text-center">
                 <th>#</th>
                 <th>Title</th>
                 <th>Category</th>
@@ -27,12 +27,29 @@
                 $row_span = $title->tutorials->count() + 1;
                 @endphp
                 <tr>
-                    <td rowspan="{{ $row_span }}">{{ $key + 1 }}</td>
-                    <td rowspan="{{ $row_span }}">{{ $title->title }}</td>
-                    <td rowspan="{{ $row_span }}">{{ $title->category->category }}</td>
-                    <td rowspan="{{ $row_span }}">{{ $title->is_final ? "Final" : "Progress"}}</td>
-                    <td rowspan="{{ $row_span }}">{{ $title->author->name }}</td>
-                    @if ($title->tutorials->count())
+                    <td class="text-center" rowspan="{{ $row_span }}">{{ $key + 1 }}</td>
+                    <td class="text-center" rowspan="{{ $row_span }}">{{ $title->title }}</td>
+                    <td class="text-center" rowspan="{{ $row_span }}">{{ $title->category->category }}</td>
+                    <td class="text-center" rowspan="{{ $row_span }}" class="text-center">
+                        @if ($title->is_final)
+                        <i class="fa-solid fa-circle-check text-success"></i>
+                        @else
+
+                        @if (auth()->user()->id == $title->user_id && $title->tutorials->count() > 0)
+                        <form action="{{ route('tutorials.title.update', $title->id) }}" method="POST">
+                            @csrf
+                            @method("PUT")
+                            <input class="btn btn-sm btn-primary rounded-pill py-1" type="submit" value="Set Final"
+                                name="set_final">
+                        </form>
+                        @else
+                        <span class="badge text-bg-warning rounded-pill">Open</span>
+                        @endif
+
+                        @endif
+                    </td>
+                    <td class="text-center" rowspan="{{ $row_span }}">{{ $title->author->name }}</td>
+                    @if ($title->tutorials->count() > 0)
                     @foreach ($title->tutorials as $tutorial)
                 <tr>
                     <td>{{ $tutorial->sub_title }}</td>
@@ -71,8 +88,8 @@
                     </td>
                 </tr>
                 @endforeach
-                {{-- @else
-                <td>Tidak ada tutorial</td> --}}
+                @else
+                <td colspan="3" class="text-danger">Belum ada tutorial</td>
                 @endif
                 </tr>
                 @endforeach

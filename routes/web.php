@@ -35,8 +35,9 @@ Route::post('/reset-password', [App\Http\Controllers\Admin\AuthController::class
 Route::prefix('tutorials')->group(function() {
     Route::name('tutorials.')->group(function() {
         Route::resource('/all',  App\Http\Controllers\Tutorial\TutorialController::class);
-        Route::resource('/title',  App\Http\Controllers\Tutorial\TitleController::class)->only(['store', 'show', 'destroy']);
+        Route::resource('/title',  App\Http\Controllers\Tutorial\TitleController::class)->only(['store', 'show', 'update', 'destroy']);
         Route::resource('/comment',  App\Http\Controllers\Tutorial\CommentController::class);
+        Route::get('/search', App\Http\Controllers\Tutorial\SearchTurorialController::class)->name('search');
     });
 });
 
