@@ -1,34 +1,25 @@
 <?php
 
-namespace App\Http\Controllers\Tutorial;
+namespace App\Http\Controllers\Project;
 
+use App\Notifications\Comment\CommentApprove;
+use App\Notifications\ProjectCommentApprove;
+use App\Notifications\Comment\CommentReject;
+use App\Notifications\ProjectCommentReject;
+use Illuminate\Support\Facades\Validator;
+use App\Models\Project\ProjectComment;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Validator;
-use App\Models\Tutorial\Comment;
 use App\Models\User;
-use App\Notifications\Comment\CommentApprove;
-use App\Notifications\Comment\CommentReject;
-use App\Models\Project\ProjectComment;
 
-class CommentController extends Controller
+class ProjectComentController extends Controller
 {
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        $comments = Comment::with(['tutorial:id,title_id,sub_title', 'tutorial.title.author', 'user'])
-                                ->notApproved()
-                                ->get()
-                                ->groupBy('tutorial.title_id');
-        // dd($comments->toArray());
-        $project_comments = ProjectComment::with(['content:id,project_id,sub_title', 'content.project.author', 'user'])
-                                ->notApproved()
-                                ->get()
-                                ->groupBy('content.project_id');
-        // dd($project_comments->toArray());
-        return view('tutorials.tutorial-comment', compact('comments', 'project_comments'));
+        //
     }
 
     /**
@@ -44,6 +35,7 @@ class CommentController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->all());
         $validated = $request->validate([
             "comment" => "required",
         ], [
@@ -51,13 +43,14 @@ class CommentController extends Controller
         ]);
 
         try {
-            $comment = Comment::create([
-                'tutorial_id' => $request->input('tutorial_id'),
+            $comment = ProjectComment::create([
+                'project_content_id' => $request->input('project_content_id'),
                 'user_id' => auth()->user()->id,
                 'comment' => $request->input('comment')
             ]);
         } catch (\Throwable $th) {
-            \Log::error($th->getMessage());
+            $current_route_action = route()->currentRouteAction();
+            \Log::error('Error: ' . $th->getMessage() . ' in ' . $current_route_action);
 
             return redirect()->back()->with(['error' => "Terjadi kesalahan dalam menyimpan komen anda."]);
         }
@@ -88,7 +81,7 @@ class CommentController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        $validator =Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'reason' => $request->input('reject') ? 'required' : '',
         ]);
 
@@ -96,26 +89,31 @@ class CommentController extends Controller
             return redirect()->back()->with(['error' => "Saat reject comment, reason tidak boleh kosong."]);
         }
 
-        $comment = Comment::find($id);
-        $user = User::find($comment->user_id);
+        $project_comment = ProjectComment::find($id);
+        $user = User::find($project_comment->user_id);
+        
+        try {
+            if ($request->input('approve')) {
+                $project_comment->is_approve = true;
+                $project_comment->save();
+    
+                $project_comment->load('content:id,project_id');
+    // dd($project_comment->toArray());
+                $user->notify(new ProjectCommentApprove($project_comment));
+            } else {
+                $reason = $request->input('reason');
 
-        // dd($request->all());
+                $old_comment = $project_comment->load('content:id,project_id');
 
-        if ($request->input('approve')) {
-            $comment->is_approve = true;
-            $comment->save();
+                $project_comment->delete();
 
-            $comment->load('tutorial:id,title_id');
+                $user->notify(new ProjectCommentReject($old_comment, $reason));
+            }
+        } catch (\Throwable $th) {
+            $current_route_action = app('router')->currentRouteAction();
+            \Log::error('Error: ' . $th->getMessage() . ' in ' . $current_route_action);
 
-            $user->notify(new CommentApprove($comment));
-        } else {
-            $reason = $request->input('reason');
-
-            $old_comment = $comment->load('tutorial:id,title_id');
-
-            $comment->delete();
-
-            $user->notify(new CommentReject($old_comment, $reason));
+            return redirect()->back()->with(['error' => "Terjadi kesalahan dalam menyimpan komen anda."]);
         }
 
         return redirect()->back()->with([

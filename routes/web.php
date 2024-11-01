@@ -41,6 +41,16 @@ Route::prefix('tutorials')->group(function() {
     });
 });
 
+/* ---------------------------- By Project Route ---------------------------- */
+ROute::prefix('projects')->group(function() {
+    Route::name('pj.')->group(function() {
+        Route::resource('titles', App\Http\Controllers\Project\ProjectController::class);
+        Route::resource('contents', App\Http\Controllers\Project\ProjectContentController::class);
+        Route::post('contents/publish/{id}', [App\Http\Controllers\Project\ProjectContentController::class, 'publish'])->name('contents.publish');
+        Route::resource('comment', App\Http\Controllers\Project\ProjectComentController::class);
+    });
+});
+
 /* ------------------------------- Admin route ------------------------------ */
 Route::middleware(['auth', 'isAdmin'])->group(function() {
     Route::get('/admin', App\Http\Controllers\Admin\AdminController::class)->name('admin');

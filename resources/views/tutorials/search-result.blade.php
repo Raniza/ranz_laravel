@@ -80,4 +80,12 @@
 </div>
 
 @endif
+
+@if (!$titles->count() > 0 && $tutorials->count() > 0)
+
+<h5 class="fw-normal mt-4">Search result <b>"No tutorial"</b></h5>
+<hr>
+
+@endif
+
 @endsection

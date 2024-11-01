@@ -118,7 +118,7 @@
                 @endauth
 
                 @guest
-                <form action="{{ route('user.login') }}" method="GET">
+                <form action="{{ route('login') }}" method="GET">
                     <button type="submit" class="btn btn-sm btn-primary">Login to Leave Comment</button>
                 </form>
                 @endguest

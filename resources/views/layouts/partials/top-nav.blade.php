@@ -20,7 +20,9 @@
                         href="{{ route('tutorials.all.index') }}">Tutorials</a>
                 </li>
                 <li class="nav-item">
-                    <a href="#" class="nav-link disabled" aria-disabled="true">By Project</a>
+                    <a href="{{ route('pj.titles.index') }}"
+                        class="nav-link {{ request()->routeIs('pj.titles.*') || request()->routeIs('pj.contents.*') ? 'active' : '' }}">By
+                        Project</a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link disabled" aria-disabled="true">Demo</a>

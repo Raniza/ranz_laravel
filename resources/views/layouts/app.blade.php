@@ -28,22 +28,42 @@
             border-top: 5px solid rgb(44, 109, 183);
             border-radius: 10px;
         }
-    </style>
 
-    @yield('head')
+        /* Tombol di pojok kanan bawah */
+        .back-to-top {
+            position: fixed;
+            bottom: 60px;
+            right: 20px;
+            background-color: #0d5db1;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: none;
+            z-index: 1000;
+        }
 
-    <title>Ranz</title>
+        .back-to-top:hover {
+            background-color: #032244;
+        }
 
-    <style>
         .active {
             background-color: rgba(169, 169, 169, 0.2);
             border-radius: 50px;
         }
     </style>
 
+    @yield('head')
+
+    <title>Ranz</title>
+
 </head>
 
 <body class="bg-light">
+    <!-- Tombol Back to Top -->
+    <button class="back-to-top" id="backToTop" type="button"><i class="fa-solid fa-chevron-up"></i></button>
+
     @if (!request()->routeIs('login') && !request()->routeIs('user.register.form') &&
     !request()->routeIs('password.reset'))
     @include('layouts.partials.top-nav')
@@ -71,6 +91,21 @@
 
     <script src="{{ asset('ranz/js/ranz.js') }}"></script>
 
+    <script>
+        const backToTopBtn = document.getElementById("backToTop");
+
+        window.onscroll = function() {
+            if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+                backToTopBtn.style.display = "block";
+            } else {
+                backToTopBtn.style.display = "none";
+            }
+        };
+
+        backToTopBtn.onclick = function() {
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        };
+    </script>
     @stack('scripts')
 </body>
 
