@@ -135,12 +135,16 @@
                                             @if (! $project->contents->where('is_publish', true)->count() > 0)
                                             @if ((auth()->check() && auth()->user()->id != $project->user_id) || !
                                             auth()->check())
-                                            <li class="list-group-item">Tidak ada tutorials</li>
+                                            <li class="list-group-item"><img
+                                                    src="{{ asset('images/work-in-progress.png') }}" height="60" alt="">
+                                            </li>
                                             @endif
                                             @endif
 
                                             @else
-                                            <li class="list-group-item">Tidak ada tutorials</li>
+                                            <li class="list-group-item"><img
+                                                    src="{{ asset('images/work-in-progress.png') }}" height="60" alt="">
+                                            </li>
                                             @endif
 
                                             @push('scripts')
@@ -185,7 +189,7 @@
                         </span>
                         <br>
                         <span class="text-muted" style="font-size: 14px;">
-                            {{ $project_content->updated_at }}
+                            {{ $project_content->created_at }}
                         </span>
                     </h6>
                     <div style="text-align: justify;">

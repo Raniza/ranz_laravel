@@ -105,7 +105,7 @@ if ($edit_mode) {
 @push('scripts')
 
 <script>
-    const oldContents = "{!! old('contents', $edit_mode ? $project_content->contents : '') !!}";
+    const oldContents = {!! json_encode(old("contents", $edit_mode ? $project_content->contents : "")) !!};
     const projecContentstForm = document.getElementById('projecContentstForm');
     
 
